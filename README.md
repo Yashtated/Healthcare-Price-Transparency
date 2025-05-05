@@ -36,9 +36,9 @@ The project follows a **Bronze-Silver-Gold data pipeline** architecture using Az
 
 - **Raw Data Files (CSV/JSON):** Healthcare pricing data files are uploaded by users or automated sources.
 - **Bronze Blob Storage:** Raw files are stored in the `bronze` container.
-- **Bronze-to-Silver Azure Function:** Triggered by new uploads, this function cleans and transforms the data, outputting standardized files.
+- **Data Processing Azure Function:** Triggered by new uploads, this function cleans and transforms the data, outputting standardized files.
 - **Silver Blob Storage:** Cleaned data is stored in the `silver` container.
-- **Silver-to-Gold Azure Function:** Triggered by new files in `silver`, this function maps data to dimension tables and loads it into the SQL database, ensuring no duplicates.
+- **Database Loading Azure Function:** Triggered by new files in `silver`, this function maps data to dimension tables and loads it into the SQL database, ensuring no duplicates.
 - **SQL Database:** Stores all processed and relationally mapped pricing data, ready for querying.
 - **Webpage Frontend:** Connects to the SQL database and provides a user interface for searching, viewing, and analyzing the data.
   
@@ -46,7 +46,7 @@ The project follows a **Bronze-Silver-Gold data pipeline** architecture using Az
 
 ## Components
 
-### 1. Bronze-to-Silver Functions App
+### 1. Data Processing Functions App
 
 - **Purpose:** Cleans and standardizes raw healthcare pricing data (CSV/JSON) uploaded to the `bronze` container.
 - **Output:** Cleaned data files written to the `silver` container.
@@ -55,7 +55,7 @@ The project follows a **Bronze-Silver-Gold data pipeline** architecture using Az
   - `requirements.txt`  
   - `host.json`  
 
-### 2. Silver-to-Gold Functions App
+### 2. Database Loading Functions App
 
 - **Purpose:** Loads cleaned data from the `silver` container into the SQL database, mapping payers, plans, and codes to dimension tables and preventing duplicates.
 - **Output:** Populated `Price` table and related dimensions in the SQL database.
@@ -97,7 +97,7 @@ The project follows a **Bronze-Silver-Gold data pipeline** architecture using Az
 ## Setup & Deployment
 
 1. **Azure Functions Apps**
-   - Deploy the `bronze-to-silver` and `silver-to-gold` function apps to Azure.
+   - Deploy the `Data Processing` and `Database Loading` function apps to Azure.
    - Configure Blob Storage triggers and environment variables as required.
 
 2. **SQL Database**
