@@ -109,7 +109,7 @@ This Azure Functions app is triggered by new file uploads to the `bronze` contai
 
 ## License
 
-MIT License (or specify your license here).
+MIT License.
 
 ---
 
