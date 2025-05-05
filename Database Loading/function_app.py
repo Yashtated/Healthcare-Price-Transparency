@@ -29,10 +29,7 @@ def process_silver_to_gold(silverblob: func.InputStream):
         cursor.close()
         conn.close()
         return
-    try:
-        # Read silver data
-        #df = read_silver_file(silverblob)
-        
+    try:        
         # Process dimensions and get mapping dictionaries
         payer_map = process_payers(df, cursor)
         plan_map = process_plans(df, cursor,payer_map)
@@ -90,7 +87,6 @@ def transform_data(df, payer_map, plan_map, code_map, hospital_id):
         'CodeID', 'gross', 'discounted_cash', 'min', 'max',
         'estimated_amount', 'negotiated_percentage', 'PayerID', 'PlanID', 'HospitalID'
     ]
-    # Ensure all columns exist before selecting
     df = df[[col for col in price_columns if col in df.columns]]
     return df.dropna(subset=['CodeID', 'PayerID', 'PlanID'])
 
@@ -134,7 +130,7 @@ def extract_hospital_id(filename, cursor):
         return result[0]
     else:
         logging.warning(f"No hospital ID found for: {hospital_name}")
-        return 0  # Or handle appropriately
+        return 0 
 
 
 def verify_hospital(hospital_id, cursor):
