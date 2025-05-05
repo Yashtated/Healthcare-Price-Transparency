@@ -6,7 +6,7 @@ import os
 from datetime import datetime
 
 # Connection string for Azure SQL Database
-AZURE_CONNECTION_STRING="Driver={ODBC Driver 18 for SQL Server};Server=tcp:practicum.database.windows.net,1433;Database=masterdata;Uid=practicum;Pwd=Yash0407;Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;" 
+AZURE_CONNECTION_STRING="Driver={ODBC Driver 18 for SQL Server};Server=tcp:practicum.database.windows.net,1433;Database={------};Uid=practicum;Pwd={-------};Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;" 
 
 def log(message):
     print(f"[{datetime.now()}] {message}")
