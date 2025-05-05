@@ -58,7 +58,10 @@ This Azure Functions app is triggered by new file uploads to the `bronze` contai
    - Calculates missing negotiated percentages when possible.
 
 4. **JSON Processing:**  
-   - Loads JSON data and removes fields with null values.
+   - Reads and flattens nested JSON pricing data, extracting all relevant fields for each CPT code and payer-plan combination.
+   - Cleans and standardizes text fields, and filters to include only CPT-coded records.
+   - Drops rows missing essential data and calculates missing negotiated percentages when possible.
+   - Outputs a consistent, tabular DataFrame ready for downstream processing in the silver container.
 
 5. **Output:**  
    Cleaned data is saved to the `silver` container, preserving the file type.
