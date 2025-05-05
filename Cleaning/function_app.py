@@ -20,7 +20,7 @@ def process_files(myblob: func.InputStream,outputblob: func.Out[str]):
     try:
         if file_ext == '.json':
             cleaned_data = process_json(myblob)
-            output = save_to_silver(cleaned_data, blob_name, 'json')
+            output = save_to_silver(cleaned_data, blob_name, 'csv')
             outputblob.set(output)
         elif file_ext == '.csv':
             cleaned_data = process_csv(myblob)
@@ -162,9 +162,64 @@ def process_long_format(df):
 def process_json(myblob):
     content = myblob.read()
     data = json.loads(content)
-    # Add JSON transformations
-    clean_data = {k: v for k, v in data.items() if v is not None}
-    return clean_data
+    rows = []
+
+    # Traverse the JSON structure
+    for sci in data['standard_charge_information']:
+        description = sci.get('description')
+        # There may be multiple code_information entries
+        for code_info in sci.get('code_information', []):
+            code = code_info.get('code')
+            code_type = code_info.get('type')
+            # There may be multiple standard_charges
+            for charge in sci.get('standard_charges', []):
+                minimum = charge.get('minimum')
+                maximum = charge.get('maximum')
+                setting = charge.get('setting')
+                gross=charge.get('gross_charge')
+                discounted_cash=charge.get('discounted_cash')
+                # There may be multiple payers_information
+                for payer in charge.get('payers_information', []):
+                    row = {
+                        'description': description,
+                        'code|1': code,
+                        'code_type': code_type,
+                        'gross':gross,
+                        'discounted_cash':discounted_cash,
+                        'min': minimum,
+                        'max': maximum,
+                        'payer': payer.get('payer_name'),
+                        'plan': payer.get('plan_name'),
+                        'negotiated_percentage': payer.get('standard_charge_percentage'),
+                        'negotaited_dollar': payer.get('standard_charge_dollar'),
+                        'estimated_amount': payer.get('estimated_amount'),
+                    }
+                    rows.append(row)
+    # Convert to DataFrame
+    df = pd.DataFrame(rows)
+    
+    # Filter rows for 'CPT'
+    df = df[df['code_type'] == 'CPT']
+
+    df['payer'] = df['payer'].apply(clean_text)
+    df['plan'] = df['plan'].apply(clean_text)
+    df['description'] = df['description'].apply(clean_text)
+    df = df.drop(columns=[col for col in ['code_type'] if col in df.columns])
+
+    cols_to_check = [col for col in df.columns if col not in ['negotiated_percentage', 'negotiated_dollar', 'estimated_amount']]
+    while df[cols_to_check].isnull().any().any():
+        df = df.dropna(subset=cols_to_check)
+    df = df.dropna(subset=['negotiated_dollar'])
+    
+    # Fill null negotiated_percentage using the formula
+    df['negotiated_percentage'] = df['negotiated_percentage'].fillna(
+        ((df['negotaited_dollar'] / df['max']) * 100).round(2))
+   
+    df = df.drop(columns=['estimated_dollar'])
+    df = df.rename(columns={
+    'negotaited_dollar': 'estimated_amount',})
+    
+    return df
 
 def save_to_silver(data, filename, data_type):
     output_name = f"{data_type}_{filename}"
