@@ -1,4 +1,4 @@
-# Azure Functions: Silver-to-Gold Data Loader
+# Azure Functions: Database Loading
 
 This repository contains an Azure Functions app that automates the loading of cleaned healthcare pricing data (from the "silver" container) into a SQL database, mapping all relevant dimensions and ensuring data integrity.
 
@@ -114,7 +114,7 @@ This Azure Functions app is triggered when a processed data file is uploaded to 
 
 - Only `.csv` files are supported; unsupported file types should be handled as needed.
 - The function expects the file name to match the hospital name for mapping.
-- Dimension tables (`Payer`, `Plan_`, `CodeDescription`, `Hospital`) must exist in the SQL database.
+- Dimension tables (`Payer`, `Plan_`, `CodeDescription`, `Hospital`,`Price`) must exist in the SQL database.
 - The function prevents duplicate price data loading for each hospital.
 
 ---
