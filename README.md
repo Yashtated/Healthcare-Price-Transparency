@@ -119,6 +119,7 @@ The project follows a **Bronze-Silver-Gold data pipeline** architecture using Az
 - Python (pandas, pyodbc, azure-functions, etc.)
 - Web framework (Flask or FastAPI recommended)
 - HTML/CSS/JavaScript for frontend
+- Power BI for Visualizations
 
 ---
 
